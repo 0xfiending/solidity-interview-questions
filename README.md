@@ -139,7 +139,7 @@ tx.origin, etc. should not be used as a seed to a RNG.
   - Call is the recommended way to send ether. 
 
 2. How do you write a gas-efficient for loop in Solidity?
-- Use ++i, instead of i++
+- Use ++i, instead of i++ </br>
 `for (uint i = 0; i < 100; ) {
     // do stuff
     unchecked { ++i }
