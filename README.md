@@ -273,12 +273,12 @@ tx.origin, etc. should not be used as a seed to a RNG.
   - Usually occurs with large orders on a DEX.
   - A bot will front-ru the transaction to increase the price of the asset and increase the slippage. The bot will then immediately back-run and sell the assets, to lock in profits. 
 
-32. If a delegatecall is made to a function that reverts, what does the delegatecall do?
+32. If a delegatecall is made to a function that reverts, what does the delegatecall do? </br>
 Sample: </br>
-`contract Counter{
-    constructor() {}
-    function revertFunc() external { revert(); }
-}`
+`contract Counter{`
+`   constructor() {}`
+`   function revertFunc() external { revert(); }`
+`}`
 
 Test Case 1: </br>
 `function test_RevertDelegateCall() public {
