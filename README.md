@@ -202,60 +202,142 @@ tx.origin, etc. should not be used as a seed to a RNG.
 - It is also recommended to use nonces to signify how many times a signature has been used.
 
 16. What is gas griefing?
+- When a transaction relayer executes a transaction on a user's behalf but does not send enough funds to complete the call.
+  - The relayer is able to censor transactions this way.
+- Gas Griefing can be used maliciously to only execute swaps when the price of an asset has increased, ensuring risk-free profits. 
 
 17. How would you design a game of rock-paper-scissors in a smart contract such that players cannot cheat?
+- * Commit-reveal scheme 
 
 18. What is the free memory pointer and where is it stored?
+- The free memory pointer is a 32 byte word that contains the address of the last byte written in memory.
+- The free memory pointer is the 3rd 32 byte word in the contract bytecode.
+- When a contract is first created, 0x80 is always loaded in the free memory pointer.
 
 19. What function modifiers are valid for interfaces?
+- *
 
 20. What is the difference between memory and calldata in a function argument?
+- *
 
 21. Describe the three types of storage gas costs.
+- *
 
 22. Why shouldn’t upgradeable contracts use the constructor?
+- Constructors are never used for upgradeable contracts, if these contracts follow the standard patterns.
+  - initialize() is used instead.
+  - If the constructor is used, it could lead to a vulnerability where the function is exposed publicly, and any user could call the constructor() and become the admin of the contract. 
 
 23. What is the difference between UUPS and the Transparent Upgradeable Proxy pattern?
+- *
 
 24. If a contract delegatecalls an empty address or an implementation that was previously self-destructed, what happens? What if it is a regular call instead of a delegatecall?
+- *
 
 25. What danger do ERC777 tokens pose?
+- ERC777 is known to be vulnerable to reentrancy attacks due to its usage of hooks.
 
 26. According to the solidity style guide, how should functions be ordered?
+- The recommended ordering is
+  - Constructor
+  - Receive - if exists
+  - Fallback - if exists
+  - External
+  - Public
+  - Internal
+  - Private
+  - View & Pure 
 
-27. According to the solidity style guide, how should function modifiers be ordered?
+27. According to the solidity style guide, how should function modifiers be ordered? 
+- Type declarations
+- State Variables
+- Events
+- Modifiers
+- Functions
 
 28. What is a bonding curve?
+- * Relationship between the price and supply of an asset.
 
 29. How does safeMint differ from mint in the OpenZeppelin ERC721 implementation? 
+- safeMint is used with IERC721Receiver to check if the recipient is a contract capable to manage NFTs.
+  - safeMint causes the recipient to call a receive hook.
+  - mint should be used if individual users are paying for the NFTs.
+  - If you expect contracts to be the receivers, safeMint should be used. 
 
 30. What keywords are provided in Solidity to measure time?
+- seconds, minutes, hours, days, weeks
+- years is deprecated
 
 31. What is a sandwich attack?
+- A MEV opportunity where a transaction is both front-run and back-run.
+  - Usually occurs with large orders on a DEX.
+  - A bot will front-ru the transaction to increase the price of the asset and increase the slippage. The bot will then immediately back-run and sell the assets, to lock in profits. 
 
 32. If a delegatecall is made to a function that reverts, what does the delegatecall do?
+Sample: </br>
+`contract Counter{
+    constructor() {}
+    function revertFunc() external { revert(); }
+}`
+
+Test Case 1: </br>
+`function test_RevertDelegateCall() public {
+  (bool success, bytes memory data) =
+    address(counter).delegatecall(
+  );
+  console2.log(success);
+}`
+
+Test Case 2: This test passes </br>
+`function test_RevertDelegateCall1() public {
+  address(counter).delegatecall(
+    abi.encodeWithSignature("revertFunc()", "")
+  );
+}`
+
+- Test 1 returns False.
+- The delegatecall on a function that reverts does not propagate the errors back from the callee to the caller. (Test 2)
+  - The return value must be checked for successful execution. (Test 1)
 
 33. What is a gas efficient alternative to multiplying and dividing by a multiple of two?
+- Use bit-shifting.
+  - Shifting left multiplies by 2
+  - Shifting right divides by 2 
 
 34. How large a uint can be packed with an address in one slot?
+- Uint256 is 256 bits. An address is 160 bits.
+  - 256 - 160 = 96 bits
+    - 96 bits can be used for the integer packing.
+      - 12 byte word
+    - (2 ^ 96) - 1 is the largest integer that can be packed with an address.  
 
 35. Which operations give a partial refund of gas?
+- * When a storage location is freed, by using the delete keyword, or when a contract is destroyed.
 
 36. What is ERC165 used for?
+- * ERC165 is an interface to check if a contract supports an interface.
 
 37. If a proxy makes a delegatecall to A, and A does address(this).balance, whose balance is returned, the proxy's or A?
+- *
 
 38. What is a slippage parameter useful for?
+- * The slippage parameter can be used to make a swap that deviates only a small margin from the quoted price.
 
 39. What does ERC721A do to reduce mint costs? What is the tradeoff?
+- *
 
 40. Why doesn't Solidity support floating point arithmetic?
+- * More error-prone
 
 41. What is TWAP?
+- Time-Weight Average Price
+  - This is usually used to disperse a large order over a duration to achieve the best price on average and reduce market impact.  
 
 42. How does Compound Finance calculate utilization?
+- *
 
 43. If a delegatecall is made to a function that reads from an immutable variable, what will the value be?
+- *
 
 # Hard
 1. How does fixed point arithmetic represent numbers?
