@@ -1,10 +1,17 @@
 # Solidity Interview Questions
 
 Over 140 interview questions for Ethereum Developers
-All of these questions can be answered in three sentences or less.
+All of these questions can be answered in three sentences or less. </br></br>
+
+The answers provided are aggregated from my personal research and knowledge. </br>
+Solutions that are not confident or are incomplete will be preceded with: * </br>
 
 # Easy
 1. What is the difference between private, internal, public, and external functions?
+- Private functions can only be called by other functions within the immediate contract.
+- Internal functions can only be called by other functions within the immediate contract and contracts that inherit the immediate contract.
+- Public functions can be called by anyone - immediate contract, outsides contracts, EOAs, etc.
+- External functions can only be called by outside contracts and EOAs.
 
 2. Approximately, how large can a smart contract be?
 
