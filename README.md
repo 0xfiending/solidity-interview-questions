@@ -133,34 +133,73 @@ tx.origin, etc. should not be used as a seed to a RNG.
 
 # Medium
 1. What is the difference between transfer and send? Why should they not be used?
+- transfer() uses 2300 gas and throws an error on failure. transfer() will fail if fallback/receive hook does not exist.
+- send() also sends 2300 gas. This function returns a bool value.
+- call() returns a bool and memory values. This function triggers the fallback/receive hook of the receiving address. All gas is forwarded.
+  - Call is the recommended way to send ether. 
 
 2. How do you write a gas-efficient for loop in Solidity?
+- Use ++i, instead of i++
+`for (uint i = 0; i < 100; ) {
+    // do stuff
+    unchecked { ++i }
+}`
 
 3. What is a storage collision in a proxy contract?
+- Proxy contracts rely on the delegatecall() method, which uses the originating contract's storage for the call.
+- Storage collision occurs when the callee's storage variable layout deviates from the caller's storage variable layout.
+  - This could cause the caller's storage to be overwritten. 
 
 4. What is the difference between abi.encode and abi.encodePacked?
+- There can be a hash collision with abi.encodePacked()
+- Hash collisions cannot occur with abi.encode()
 
 5. uint8, uint32, uint64, uint128, uint256 are all valid uint sizes. Are there others?
+- uint is shorthand for uint256
 
 6. What changed with block.timestamp before and after proof of stake?
+- * Block intervals are set at 12 seconds. Each slot has an expected timestamp.
 
 7. What is frontrunning?
+- A MEV opportunity where a transaction is copied and executed with a higher gas price in order to be included in the block prior to another.
 
 8. What is a commit-reveal scheme and when would you use it?
+- A commit-reveal scheme is where a user will hash data off-chain and submit it to a transaction in order to mask the true value from being revealed.
+  - The value can be validated on-chain by hashing the necessary inputs and comparing hash values.
+- Commit-reveal schemes can be used in protocols where the data being submitted by the user needs to remain private (i.e. a game).
+- Commit-reveal schemes can also be used to mitigate front-running in certain cases. 
 
 9. Under what circumstances could abi.encodePacked create a vulnerability?
+- This function can cause a vulnerability if it is used for signature verification, where the user supplies values to the encodedPacked() method.
+  - This may cause a scenario where a hash collision can occur and a malicious user can sign as another user to the protocol.
 
 10. How does Ethereum determine the BASEFEE in EIP-1559?
+- The proposal was implemented as part of the London Hard Fork.
+  - The proposal introduces a base fee for all transactions and increases the block size.
+  - If the block is more than 50% full, the base fee will be increased by 12.5%.
+  - If the block is empty, the base fee will be decreased by 12.5%. 
 
 11. What is the difference between a cold read and a warm read?
+- Refers to Storage Access.
+  - A cold read is the first time a storage variable is accessed.
+  - A warm read is all subsequent accesses to the same storage variable. 
 
 12. How does an AMM price assets?
+- *
 
 13. What is a function selector clash in a proxy and how does it happen?
+- * Function selector clash with a proxy can occur when the function selector of a proxy function matches the function selector of a callee function.
 
 14. What is the effect on gas of making a function payable?
+- Execution cost is decreased by 24.
+  - Payable functions include less opcodes, specifically msg.value == zero check is bypassed. 
 
 15. What is a signature replay attack?
+- Signature replay attack is when a signature is used more than once to validate for a user.
+  - This often occurs with the usage of keccak256 with encodePacked, and ecrecover.
+- It is recommended to have the user hash the message off-chain and supply the hashed value as input to a function.
+  - Do this instead of directly hashing the values on-chain, where the user can supply the inputs.    
+- It is also recommended to use nonces to signify how many times a signature has been used.
 
 16. What is gas griefing?
 
