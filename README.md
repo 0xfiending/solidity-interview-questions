@@ -14,64 +14,122 @@ Solutions that are not confident or are incomplete will be preceded with: * </br
 - External functions can only be called by outside contracts and EOAs.
 
 2. Approximately, how large can a smart contract be?
+- EIP170 introduces code size limit of 24 kilobytes.
+- Contract creation will fail with a gas error if larger.
 
 3. What is the difference between create and create2?
+- CREATE uses the sending account and the sending account's current nonce.
+  - keccak256(abi.encodePacked(msg.sender, nonce))  
+- CREATE2 opcode allows deterministic creation of contract addresses.
+  - CREATE2 uses the sending account, the contract initcode, and a custom salt.
+  - keccak256(0xff + msg.sender + salt + keccak256(initcode)) 
 
 4. What major change with arithmetic happened with Solidity 0.8.0?
+- Overflows and underflows will throw an error.
 
 5. What special CALL is required for proxies to work?
-
+- * delegatecall ?
+  
 6. Prior to EIP-1559, how do you calculate the dollar cost of an Ethereum transaction?
+- *
 
 7. What are the challenges of creating a random number on the blockchain?
+- RNG on the blockchain is deterministic. Global variables such as block.number, block.timestamp,
+tx.origin, etc. should not be used as a seed to a RNG.
+- Instead, it is recommended to use a trusted RNG Oracle, such as Chainlink.
 
 8. What is the difference between a Dutch Auction and an English Auction?
+- In an English Auction, an auction takes place over a duration (i.e. 7 days), where the starting price of the item(s) is low and increases as bidders place bids.
+  - At the end of the duration, the bidder with the highest bid may claim the item(s).
+  - All other bidders may withdraw their bid / are refunded at the end of the duration.
+
+- In a Dutch Auction, an auction takes places over a duration (i.e. 7 days), where the starting price of the item(s) starts high and decreases over time (opposite of English Auction).
+  - The auction will end prematurely if a bidder decides to purchase the item at the current auction price and claim the item(s).  
 
 9. What is the difference between transfer and transferFrom in ERC20?
+- transfer() will transfer the value supplied to the _to address.
+- transferFrom() will transfer the value supplied from the _from address to the _to address.
+- transferFrom() is often used with contracts and an approve() call precedes a transferFrom() call.
 
 10. Which is better to use for an address allowlist: a mapping or an array? Why?
+- * Mapping, because look ups will be cheaper compared to an unsorted array, which will have to iterated each time the allowlist is checked.
 
 11. Why shouldn’t tx.origin be used for authentication?
+- * tx.origin is global variable that can be spoofed by having a contract in the middle. (Redo - better explanation)
 
 12. What hash function does Ethereum primarily use?
+- keccak256 / sha3
 
 13. How much is 1 gwei of Ether?
+- 1 gwei = 1 * 10^9
 
 14. How much is 1 wei of Ether?
+- 1 wei = 1
 
 15. What is the difference between assert and require?
+- Assert is traditionally used in test cases to validate a condition is true or false.
+- Require is used for validating conditions and propagating errors in source code.
 
 16. What is a flash loan?
+- A flash loan is where a user borrows funds, uses funds, then pays back the funds all in a single transaction. There is no risk for the lender.
 
 17. What is the check-effects pattern?
+- Checks-Effects-Interactions is a pattern that is often used to mitigate reentrancy risks. The necessary conditions are checked, then the necessary state changes are made, then external calls / transfers are made last.
 
 18. What is the minimum amount of Ether required to run a solo staking node?
+- 32 ETH is required to run a full Ethereum node.
 
 19. What is the difference between fallback and receive?
+- Either fallback or receive can be called when Ether is sent to a contract.
+  - fallback() will be called if msg.data is empty or if receive() is not implemented.
+  - fallback() is also called in situations where the function selector used in the call to the contract does not match an existing selector.
 
 20. What is reentrancy?
+- Reentrancy is when there is a callback into the calling contract during a transaction's execution.
 
 21. As of the Shanghai upgrade, what is the gas limit per block?
+- * 30 million gas is the maximum allowed. The target block size is 15 million gas. The block base fee will fluctuate based on network usage.
 
 22. What prevents infinite loops from running forever?
+- Gas limit and Block gas limit.
+  - Gas limit is the amount of gas that the sender of the transaction is willing to use for the transaction (transaction-level limit).
+  - Block gas limit is a limit set by the network for the total computation allowed in a single block, this is voted and set by validators. (network-level limit)
 
 23. What is the difference between tx.origin and msg.sender?
+- tx.origin can never be a contract. Will always be an EOA.
+- msg.sender can be spoofed to be a contract.
 
 24. How do you send Ether to a contract that does not have payable functions, or a receive or fallback?
+- It is possible to force send ether using selfdestruct.
 
 25. What is the difference between view and pure?
+- pure and view are reserved keywords in Solidity that set the visibility of a function.
+  - Pure functions promise to not read or change blockchain state.
+  - View functions promise to not change the blockchain state. 
 
 26. What is the difference between transferFrom and safeTransferFrom in ERC721?
+- safeTransferFrom checks if the receive is able to handle ERC721s.
+  - The goal is to ensure that NFTs are not locked or lost.
+  - Used with onERC721Received hook 
+
+- transferFrom is the standard way to send NFTs and does not include checks for the receiver.
 
 27. How can an ERC1155 token be made into a non-fungible token?
+- *
 
 28. What is access control and why is it important?
+- Access Control is gating access to public / external functions to only specific authorized addresses.
+- * Importance 
 
 29. What does a modifier do?
+- * A function modifier allows checks to occur before a function's execution. This provides a way to re-use checks numerous places in the contract to save gas if checks are used more than once. 
 
 30. What is the largest value a uint256 can store?
+- (2 ^ 256) - 1
 
 31. What is variable and fixed interest rate?
+- Variable rates will adjust over time in response to market conditions.
+- Fixed rates are locked in when the user obtains the loan.
 
 # Medium
 1. What is the difference between transfer and send? Why should they not be used?
