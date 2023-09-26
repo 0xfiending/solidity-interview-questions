@@ -275,10 +275,10 @@ tx.origin, etc. should not be used as a seed to a RNG.
 
 32. If a delegatecall is made to a function that reverts, what does the delegatecall do? </br>
 Sample: </br>
-`contract Counter{` </br>
-`   constructor() {}` </br>
-`   function revertFunc() external { revert(); }` </br>
-`}` </br>
+`contract Counter {\n
+  constructor() {} \n
+  function revertFunc() external { revert(); }\n
+}`
 
 Test Case 1: </br>
 `function test_RevertDelegateCall() public {
